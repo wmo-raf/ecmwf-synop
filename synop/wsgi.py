@@ -1,0 +1,1 @@
+from synop import app
