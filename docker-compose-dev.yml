@@ -10,15 +10,21 @@ services:
       - ${STATE_VOLUME}:/data/state
     environment:
       - DEBUG=False
-      - WAIT_HOSTS=${WAIT_HOSTS}
+      - WAIT_HOSTS=ecmwf_db:5432
       - WAIT_TIMEOUT=60
       - STATE_DIR=/data/state
       - DATASETS_DIR=/data/bufr
-      - SQLALCHEMY_DATABASE_URI=${DATABASE_URI}
+      - SQLALCHEMY_DATABASE_URI=postgresql://${DB_USER}:${DB_PASSWORD}@ecmwf_db:5432/${DB_NAME}
       - FLASK_APP=synop/__init__.py
     ports:
-      - 8000
-networks:
-  default:
-    name: ${AHW_DOCKER_NETWORK}
-    external: true
+      - ${PORT}:8000
+  ecmwf-db:
+    image: postgis/postgis:14-master
+    container_name: ecmwf_db
+    restart: ${RESTART_POLICY}
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:5432
