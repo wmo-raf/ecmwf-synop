@@ -5,15 +5,64 @@ import tempfile
 
 import click
 from pyoscar import OSCARClient
+from sqlalchemy.sql import text
 
 from synop import db
 from synop.config import SETTINGS
 from synop.constants import COUNTRIES
 from synop.models import Station, StationIdentifier
-from synop.utils import read_state, get_next_available_timestep, convert_bufr3, bufr2geojson, load_obs_from_geojson, \
-    update_state
+from synop.utils import (
+    read_state,
+    get_next_available_timestep,
+    convert_bufr3, update_state,
+    bufr2geojson,
+    load_obs_from_geojson
+)
 
 DATASETS_DIR = SETTINGS.get("DATASETS_DIR")
+
+
+@click.command(name="setup_db")
+def setup_db():
+    logging.info("[DBSETUP]: Setting up db")
+    sql = f"""
+            CREATE OR REPLACE FUNCTION public.synop_obs(
+            z integer,
+            x integer,
+            y integer,
+            date timestamp without time zone)
+            RETURNS bytea
+            LANGUAGE 'plpgsql'
+            COST 100
+            STABLE STRICT PARALLEL SAFE 
+        AS $BODY$
+        DECLARE
+            result bytea;
+        BEGIN
+            WITH
+            bounds AS (
+                -- Convert tile coordinates to web mercator tile bounds
+                SELECT ST_TileEnvelope(z, x, y) AS geom
+            ),
+            mvt AS (
+                SELECT ST_AsMVTGeom(ST_Transform(s.geom, 3857), bounds.geom) AS geom, s.name, o.* FROM public.observation o, bounds, public.station s
+            WHERE o.time = date and o.wigos_id=s.wigos_id
+            )
+            -- Generate MVT encoding of final input record
+            SELECT ST_AsMVT(mvt, 'default')
+            INTO result
+            FROM mvt;
+        
+            RETURN result;
+        END;
+        $BODY$;    
+    """
+
+    db.session.execute(text(sql))
+
+    db.session.commit()
+
+    logging.info("[DBSETUP]: Done Setting up db")
 
 
 @click.command(name="load_stations")

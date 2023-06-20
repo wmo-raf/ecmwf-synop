@@ -1,22 +1,17 @@
 import logging
 
-from flask import jsonify, request
+from flask import jsonify
+from sqlalchemy import func
 
+from synop.models import Observation
 from synop.routes.api.v1 import endpoints
 
 
-@endpoints.route('/stations', strict_slashes=False, methods=['GET'])
-def get_stations():
-    logging.info('[ROUTER]: Getting all stations')
+@endpoints.route('/dates', strict_slashes=False, methods=['GET'])
+def get_available_dates():
+    logging.info('[ROUTER]: Getting available dates')
 
-    include = request.args.get('include')
+    distinct_dates = Observation.query.with_entities(func.date(Observation.time)).distinct().all()
+    response = distinct_dates
 
-    response = {
-        "data": [],
-        "total": None,
-        "has_next": None,
-        "has_prev": None,
-        "page": None
-    }
-
-    return jsonify(**response), 200
+    return jsonify(response), 200

@@ -116,3 +116,4 @@ from synop import commands
 
 app.cli.add_command(commands.load_stations)
 app.cli.add_command(commands.load_observations)
+app.cli.add_command(commands.setup_db)

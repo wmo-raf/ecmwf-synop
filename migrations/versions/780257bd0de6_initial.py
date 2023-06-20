@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 91a094fe5699
+Revision ID: 780257bd0de6
 Revises: 
-Create Date: 2023-06-19 19:47:49.156344
+Create Date: 2023-06-20 11:01:12.462519
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from geoalchemy2 import Geometry
 
 # revision identifiers, used by Alembic.
-revision = '91a094fe5699'
+revision = '780257bd0de6'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,9 +22,9 @@ def upgrade():
     sa.Column('wigos_id', sa.String(length=256), nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('territory', sa.String(length=256), nullable=False),
+    sa.Column('longitude', sa.Float(), nullable=False),
+    sa.Column('latitude', sa.Float(), nullable=False),
     sa.Column('elevation', sa.Float(), nullable=True),
-    sa.Column('longitude', sa.Float(), nullable=True),
-    sa.Column('latitude', sa.Float(), nullable=True),
     sa.Column('geom', Geometry(geometry_type='POINT', srid=4326, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry'), nullable=False),
     sa.PrimaryKeyConstraint('wigos_id')
     )

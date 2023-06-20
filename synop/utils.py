@@ -122,6 +122,7 @@ def bufr2geojson(bufr_path, time_str):
         logging.debug('Procesing BUFR data')
 
         logging.debug('Generating GeoJSON features')
+        results = None
         results = as_geojson(fh.read(), serialize=False)
 
         feature_collection = {}
