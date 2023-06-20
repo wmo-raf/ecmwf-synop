@@ -1,8 +1,12 @@
 #!/bin/sh
 
-# Migrate db
+echo "Setup Schema"
+flask setup_schema
+
 echo "Running Migrations"
 flask db upgrade
-flask setup_db
+
+echo "Create PG Function"
+flask create_pg_function
 
 exec "$@"

@@ -22,9 +22,27 @@ from synop.utils import (
 DATASETS_DIR = SETTINGS.get("DATASETS_DIR")
 
 
-@click.command(name="setup_db")
-def setup_db():
-    logging.info("[DBSETUP]: Setting up db")
+@click.command(name="setup_schema")
+def setup_schema():
+    logging.info("[DBSETUP]: Setting up schema")
+    schema_sql = f"""DO
+                $do$
+                BEGIN
+                    CREATE EXTENSION IF NOT EXISTS postgis;
+                    CREATE SCHEMA IF NOT EXISTS ecmwf;
+                END
+                $do$;"""
+
+    db.session.execute(text(schema_sql))
+    db.session.commit()
+
+    logging.info("[DBSETUP]: Done Setting up schema")
+
+
+@click.command(name="create_pg_function")
+def create_pg_function():
+    logging.info("[DBSETUP]: Creating pg function")
+
     sql = f"""
             CREATE OR REPLACE FUNCTION public.synop_obs(
             z integer,
@@ -59,10 +77,9 @@ def setup_db():
     """
 
     db.session.execute(text(sql))
-
     db.session.commit()
 
-    logging.info("[DBSETUP]: Done Setting up db")
+    logging.info("[DBSETUP]: Done Creating pg function")
 
 
 @click.command(name="load_stations")

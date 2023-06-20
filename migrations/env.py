@@ -73,6 +73,7 @@ def run_migrations_offline():
         include_object=alembic_helpers.include_object,
         process_revision_directives=alembic_helpers.writer,
         render_item=alembic_helpers.render_item,
+        version_table_schema="ecmwf",
     )
 
     with context.begin_transaction():
@@ -107,6 +108,7 @@ def run_migrations_online():
             include_object=alembic_helpers.include_object,
             process_revision_directives=alembic_helpers.writer,
             render_item=alembic_helpers.render_item,
+            version_table_schema="ecmwf",
         )
 
         with context.begin_transaction():

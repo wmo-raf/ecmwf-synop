@@ -5,6 +5,8 @@ from synop import db
 
 
 class Station(db.Model):
+    __tablename__ = "synop_station"
+
     wigos_id = db.Column(db.String(256), primary_key=True)
     name = db.Column(db.String(256), nullable=False)
     territory = db.Column(db.String(256), nullable=False)
@@ -58,12 +60,13 @@ obs_columns = ['time', 'non_coordinate_pressure', 'characteristic_of_pressure_te
 
 
 class Observation(db.Model):
+    __tablename__ = "synop_observation"
     __table_args__ = (
         db.UniqueConstraint('wigos_id', 'time', name='unique_station_time'),
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    wigos_id = db.Column(db.String(256), db.ForeignKey('station.wigos_id', ondelete="CASCADE"), nullable=False)
+    wigos_id = db.Column(db.String(256), db.ForeignKey('synop_station.wigos_id', ondelete="CASCADE"), nullable=False)
     time = db.Column(db.DateTime(), nullable=False)
     non_coordinate_pressure = db.Column(db.Float, nullable=True)
     characteristic_of_pressure_tendency = db.Column(db.Float, nullable=True)
@@ -123,6 +126,8 @@ class Observation(db.Model):
 
 
 class StationIdentifier(db.Model):
+    __tablename__ = "synop_station_identifier"
+
     id = db.Column(db.Integer, primary_key=True)
-    wigos_id = db.Column(db.String(256), db.ForeignKey('station.wigos_id', ondelete="CASCADE"), nullable=False)
+    wigos_id = db.Column(db.String(256), db.ForeignKey('synop_station.wigos_id', ondelete="CASCADE"), nullable=False)
     identifier = db.Column(db.String(256), nullable=False)

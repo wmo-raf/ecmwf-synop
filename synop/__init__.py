@@ -116,4 +116,5 @@ from synop import commands
 
 app.cli.add_command(commands.load_stations)
 app.cli.add_command(commands.load_observations)
-app.cli.add_command(commands.setup_db)
+app.cli.add_command(commands.setup_schema)
+app.cli.add_command(commands.create_pg_function)
