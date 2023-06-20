@@ -16,6 +16,8 @@ services:
       - DATASETS_DIR=/data/bufr
       - SQLALCHEMY_DATABASE_URI=postgresql://${DB_USER}:${DB_PASSWORD}@ecmwf_db:5432/${DB_NAME}
       - FLASK_APP=synop/__init__.py
+    ports:
+      - ${PORT}:8000
   ecmwf-db:
     image: postgis/postgis:14-master
     container_name: ecmwf_db
@@ -25,4 +27,4 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "5432"
+      - ${DB_PORT}:5432
