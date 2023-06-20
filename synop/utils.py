@@ -192,7 +192,7 @@ def load_obs_from_geojson(geojson):
             properties = feature.get("properties")
             obs = Observation(**properties, wigos_id=station.wigos_id)
 
-            logging.info('[OBSERVATION]: ADD')
-            db.session.add(obs)
+            logging.info('[OBSERVATION]: UPSERT')
+            db.session.merge(obs)
 
             db.session.commit()
