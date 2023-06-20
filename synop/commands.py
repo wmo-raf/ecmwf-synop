@@ -63,7 +63,7 @@ def create_pg_function():
                 SELECT ST_TileEnvelope(z, x, y) AS geom
             ),
             mvt AS (
-                SELECT ST_AsMVTGeom(ST_Transform(s.geom, 3857), bounds.geom) AS geom, s.name, o.* FROM public.observation o, bounds, public.station s
+                SELECT ST_AsMVTGeom(ST_Transform(s.geom, 3857), bounds.geom) AS geom, s.name, o.* FROM public.synop_observation o, bounds, public.synop_station s
             WHERE o.time = date and o.wigos_id=s.wigos_id
             )
             -- Generate MVT encoding of final input record
