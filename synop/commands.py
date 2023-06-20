@@ -204,7 +204,9 @@ def load_observations():
                 # load observation to databaset
                 load_obs_from_geojson(geojson)
 
-                logging.info(f"[OBS]: Updating state...")
+                logging.info(f"[OBS]: Done ingesting for date '{next_update_str}'...")
+
+                logging.info(f"[OBS]: Updating state with '{next_update_str}'...")
                 # update state
                 update_state(next_update_str)
 
