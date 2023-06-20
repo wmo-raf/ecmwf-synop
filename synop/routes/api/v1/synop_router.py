@@ -10,7 +10,7 @@ from synop.routes.api.v1 import endpoints
 def get_available_dates():
     logging.info('[ROUTER]: Getting available dates')
 
-    distinct_dates = Observation.query.with_entities(Observation.time).distinct().all()
+    distinct_dates = Observation.query.with_entities(Observation.time).distinct().order_by(Observation.time).all()
     response = [date[0].isoformat() for date in distinct_dates]
 
     return jsonify(response), 200
