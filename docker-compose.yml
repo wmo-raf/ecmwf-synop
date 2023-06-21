@@ -10,6 +10,7 @@ services:
       - ${STATE_VOLUME}:/data/state
     environment:
       - DEBUG=False
+      - LOG=${LOG}
       - WAIT_HOSTS=${WAIT_HOSTS}
       - WAIT_TIMEOUT=60
       - STATE_DIR=/data/state

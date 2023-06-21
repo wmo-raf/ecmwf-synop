@@ -29,5 +29,11 @@ ENV PATH="${PATH}:/opt/eccodes/bin"
 # copy project
 COPY . /usr/src/app/
 
+# add synop.cron to crontab
+COPY ./synop.cron /etc/cron.d/synop.cron
+
+RUN chmod 0644 /etc/cron.d/synop.cron && crontab /etc/cron.d/synop.cron
+
+
 #run docker-entrypoint.sh
 ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
