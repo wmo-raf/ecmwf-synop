@@ -8,10 +8,12 @@ from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
 from bufr2geojson import transform as as_geojson
+from sqlalchemy.exc import IntegrityError
 
 from synop import db
 from synop.config import SETTINGS
 from synop.models import Station, StationIdentifier, Observation
+from synop.models.synop import rename_columns
 
 STATE_DIR = SETTINGS.get("STATE_DIR")
 STATE_FILE = os.path.join(STATE_DIR, "state.json")
@@ -190,9 +192,28 @@ def load_obs_from_geojson(geojson):
 
         if station:
             properties = feature.get("properties")
+
+            for key in list(properties):
+                if rename_columns.get(key):
+                    new_col_name = rename_columns.get(key)
+                    properties.update({new_col_name: properties[key]})
+
             obs = Observation(**properties, wigos_id=station.wigos_id)
 
-            logging.info('[OBSERVATION]: UPSERT')
-            db.session.merge(obs)
+            try:
+                logging.info('[OBSERVATION]: ADD')
+                db.session.add(obs)
+                db.session.commit()
+            except IntegrityError:
+                obs = Observation.query.filter_by(wigos_id=wigos_id, time=properties.get("time")).first()
 
-            db.session.commit()
+                for key, val in properties.items():
+                    if hasattr(obs, key):
+                        setattr(obs, key, val)
+
+                logging.info('[OBSERVATION]: ADD')
+                db.session.merge(obs)
+                db.session.commit()
+            except Exception as e:
+                logging.info('[OBSERVATION]: Error adding or updating')
+                db.session.rollback()
