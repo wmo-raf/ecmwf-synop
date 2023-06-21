@@ -212,7 +212,6 @@ def load_obs_from_geojson(geojson):
                         setattr(obs, key, val)
 
                 logging.info('[OBSERVATION]: ADD')
-                db.session.merge(obs)
                 db.session.commit()
             except Exception as e:
                 logging.info('[OBSERVATION]: Error adding or updating')
