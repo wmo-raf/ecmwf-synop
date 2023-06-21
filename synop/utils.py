@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
 from bufr2geojson import transform as as_geojson
-from sqlalchemy.exc import IntegrityError
 
 from synop import db
 from synop.config import SETTINGS
