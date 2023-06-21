@@ -9,20 +9,21 @@ class Station(db.Model):
 
     wigos_id = db.Column(db.String(256), primary_key=True)
     name = db.Column(db.String(256), nullable=False)
-    territory = db.Column(db.String(256), nullable=False)
+    territory = db.Column(db.String(256), nullable=True)
     longitude = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
-    elevation = db.Column(db.Float)
+    elevation = db.Column(db.Float, nullable=True)
     geom = db.Column(Geometry(geometry_type="POINT", srid=4326), nullable=False)
 
-    def __init__(self, wigos_id, name, territory, elevation, longitude, latitude):
+    def __init__(self, wigos_id, name, longitude, latitude, territory=None, elevation=None):
         self.wigos_id = wigos_id
         self.name = name
-        self.territory = territory
-        self.elevation = elevation
         self.longitude = longitude
         self.latitude = latitude
         self.geom = func.ST_Point(self.longitude, self.latitude)
+
+        self.territory = territory
+        self.elevation = elevation
 
     def __repr__(self):
         return '<Station %r>' % self.name

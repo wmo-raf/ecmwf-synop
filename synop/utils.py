@@ -157,6 +157,15 @@ def bufr2geojson(bufr_path, time_str):
 
                     feature_collection[wigos_id]["id"] = wigos_id
 
+                    metadata = f_properties.get("metadata") or []
+                    feature_collection[wigos_id]["metadata"] = {}
+
+                    # get station metadata
+                    for meta in metadata:
+                        if meta.get("name") == "station_or_site_name":
+                            feature_collection[wigos_id]["metadata"]["station_or_site_name"] = meta.get("description")
+                            break
+
                     final_properties = feature_collection[wigos_id].get("properties")
 
                     time = time_str
@@ -188,6 +197,30 @@ def load_obs_from_geojson(geojson):
             if identifier:
                 wigos_id = identifier.wigos_id
                 station = Station.query.get(wigos_id)
+
+        if not station:
+            metadata = feature.get("metadata")
+            if metadata and metadata.get("station_or_site_name"):
+                geom = feature.get("geometry").get("coordinates")
+
+                if geom:
+                    station_data = {
+                        "wigos_id": wigos_id,
+                        "name": metadata.get("station_or_site_name"),
+                        "longitude": geom[0],
+                        "latitude": geom[1],
+                    }
+
+                    station = Station(**station_data)
+
+                    try:
+                        logging.info('[STATION]: ADD')
+                        db.session.add(station)
+                        db.session.commit()
+                    except Exception as e:
+                        logging.error(f"[STATION]: ADD ERROR: {e}")
+                        db.session.rollback()
+                        station = None
 
         if station:
             properties = feature.get("properties")
