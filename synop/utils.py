@@ -198,21 +198,26 @@ def load_obs_from_geojson(geojson):
                     new_col_name = rename_columns.get(key)
                     properties.update({new_col_name: properties[key]})
 
-            obs = Observation(**properties, wigos_id=station.wigos_id)
+            exists = False
+            obs = Observation.query.filter_by(wigos_id=wigos_id, time=properties.get("time")).first()
 
-            try:
-                logging.info('[OBSERVATION]: ADD')
-                db.session.add(obs)
-                db.session.commit()
-            except IntegrityError:
-                obs = Observation.query.filter_by(wigos_id=wigos_id, time=properties.get("time")).first()
-
+            if obs:
+                exists = True
                 for key, val in properties.items():
                     if hasattr(obs, key):
                         setattr(obs, key, val)
+            else:
+                obs = Observation(**properties, wigos_id=station.wigos_id)
 
-                logging.info('[OBSERVATION]: ADD')
+            try:
+                if not exists:
+                    logging.info('[OBSERVATION]: ADD')
+                    db.session.add(obs)
+                else:
+                    logging.info('[OBSERVATION]: UPDATE')
+
                 db.session.commit()
+
             except Exception as e:
                 logging.info('[OBSERVATION]: Error adding or updating')
                 db.session.rollback()
