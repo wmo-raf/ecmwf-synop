@@ -184,7 +184,6 @@ def load_observations():
             next_update_str = next_update.isoformat()
             logging.info(f'[OBS]: Trying ingestion for date {next_update_str}...')
             d_str = next_update.strftime("%Y%m%d%H%M")
-
             f_name = f"SYNA0001_{d_str}_180.DAT"
 
             file_path = os.path.join(DATASETS_DIR, f_name)
@@ -201,7 +200,7 @@ def load_observations():
                     geojson = bufr2geojson(out_bufr4, next_update_str)
 
                 logging.info(f"[OBS]: Ingesting to database...")
-                # load observation to databaset
+                # load observation to database
                 load_obs_from_geojson(geojson)
 
                 logging.info(f"[OBS]: Done ingesting for date '{next_update_str}'...")

@@ -43,21 +43,53 @@ rename_columns = {
     "3hour_pressure_change": "pressure_change_3hour",
 }
 
-obs_columns = ['time', 'non_coordinate_pressure', 'characteristic_of_pressure_tendency',
-               'non_coordinate_geopotential_height', 'air_temperature', 'dewpoint_temperature', 'horizontal_visibility',
-               'state_of_ground', 'ground_minimum_temperature_past12hours', 'present_weather', 'past_weather1',
-               'past_weather2', 'total_sunshine', 'minimum_temperature_at_height_and_over_period_specified',
-               'maximum_wind_gust_speed', 'wind_direction', 'wind_speed', 'pressure_reduced_to_mean_sea_level',
-               'relative_humidity', 'cloud_cover_total', 'cloud_amount', 'height_of_base_of_cloud', 'cloud_type',
-               'long_wave_radiation_integrated_over_period_specified', '24hour_pressure_change',
-               '3hour_pressure_change',
-               'evaporation', 'other_weather_phenomena', 'obscuration', 'precipitation_type',
-               'maximum_temperature_at_height_and_over_period_specified', 'maximum_wind_gust_direction',
-               'total_precipitation_or_total_water_equivalent',
-               'extreme_counterclockwise_wind_direction_of_avariable_wind',
-               'extreme_clockwise_wind_direction_of_avariable_wind',
-               'global_solar_radiation_integrated_over_period_specified', 'soil_temperature'
-               ]
+obs_columns = [
+    'time',
+    'non_coordinate_pressure',
+    'pressure_reduced_to_mean_sea_level',
+    'wind_direction_at10m',
+    'wind_speed_at10m',
+    'air_temperature_at2m',
+    'dewpoint_temperature_at2m',
+    'horizontal_visibility',
+    'present_weather',
+    'past_weather1',
+    'past_weather2',
+    'cloud_cover_total',
+    'cloud_amount',
+    'height_of_base_of_cloud',
+    'cloud_type',
+    'air_temperature',
+    'dewpoint_temperature',
+    'relative_humidity',
+    'total_sunshine',
+    'minimum_temperature_at_height_and_over_period_specified',
+    'wind_direction',
+    'wind_speed',
+    'long_wave_radiation_integrated_over_period_specified',
+    '24hour_pressure_change',
+    'characteristic_of_pressure_tendency',
+    'non_coordinate_geopotential_height',
+    'state_of_ground',
+    'ground_minimum_temperature_past12hours',
+    'maximum_wind_gust_speed',
+    '3hour_pressure_change',
+    'evaporation',
+    'total_precipitation_past3hours',
+    'other_weather_phenomena',
+    'obscuration',
+    'precipitation_type',
+    'maximum_temperature_at_height_and_over_period_specified',
+    'non_coordinate_geopotential',
+    'total_precipitation_past1hour',
+    'maximum_wind_gust_direction',
+    'total_precipitation_or_total_water_equivalent',
+    'extreme_counterclockwise_wind_direction_of_avariable_wind',
+    'extreme_clockwise_wind_direction_of_avariable_wind',
+    'global_solar_radiation_integrated_over_period_specified',
+    'soil_temperature',
+    'total_precipitation_past12hours'
+]
 
 
 class Observation(db.Model):
@@ -70,41 +102,49 @@ class Observation(db.Model):
     wigos_id = db.Column(db.String(256), db.ForeignKey('synop_station.wigos_id', ondelete="CASCADE"), nullable=False)
     time = db.Column(db.DateTime(), nullable=False)
     non_coordinate_pressure = db.Column(db.Float, nullable=True)
-    characteristic_of_pressure_tendency = db.Column(db.Float, nullable=True)
-    non_coordinate_geopotential_height = db.Column(db.Float, nullable=True)
-    air_temperature = db.Column(db.Float, nullable=True)
-    dewpoint_temperature = db.Column(db.Float, nullable=True)
+    pressure_reduced_to_mean_sea_level = db.Column(db.Float, nullable=True)
+    wind_direction_at10m = db.Column(db.Float, nullable=True)
+    wind_speed_at10m = db.Column(db.Float, nullable=True)
+    air_temperature_at2m = db.Column(db.Float, nullable=True)
+    dewpoint_temperature_at2m = db.Column(db.Float, nullable=True)
     horizontal_visibility = db.Column(db.Float, nullable=True)
-    state_of_ground = db.Column(db.Float, nullable=True)
-    ground_minimum_temperature_past12hours = db.Column(db.Float, nullable=True)
     present_weather = db.Column(db.Float, nullable=True)
     past_weather1 = db.Column(db.Float, nullable=True)
     past_weather2 = db.Column(db.Float, nullable=True)
-    total_sunshine = db.Column(db.Float, nullable=True)
-    minimum_temperature_at_height_and_over_period_specified = db.Column(db.Float, nullable=True)
-    maximum_wind_gust_speed = db.Column(db.Float, nullable=True)
-    wind_direction = db.Column(db.Float, nullable=True)
-    wind_speed = db.Column(db.Float, nullable=True)
-    pressure_reduced_to_mean_sea_level = db.Column(db.Float, nullable=True)
-    relative_humidity = db.Column(db.Float, nullable=True)
     cloud_cover_total = db.Column(db.Float, nullable=True)
     cloud_amount = db.Column(db.Float, nullable=True)
     height_of_base_of_cloud = db.Column(db.Float, nullable=True)
     cloud_type = db.Column(db.Float, nullable=True)
+    air_temperature = db.Column(db.Float, nullable=True)
+    dewpoint_temperature = db.Column(db.Float, nullable=True)
+    relative_humidity = db.Column(db.Float, nullable=True)
+    total_sunshine = db.Column(db.Float, nullable=True)
+    minimum_temperature_at_height_and_over_period_specified = db.Column(db.Float, nullable=True)
+    wind_direction = db.Column(db.Float, nullable=True)
+    wind_speed = db.Column(db.Float, nullable=True)
     long_wave_radiation_integrated_over_period_specified = db.Column(db.Float, nullable=True)
     pressure_change_24hour = db.Column(db.Float, nullable=True)
     pressure_change_3hour = db.Column(db.Float, nullable=True)
+    characteristic_of_pressure_tendency = db.Column(db.Float, nullable=True)
+    non_coordinate_geopotential_height = db.Column(db.Float, nullable=True)
+    state_of_ground = db.Column(db.Float, nullable=True)
+    ground_minimum_temperature_past12hours = db.Column(db.Float, nullable=True)
+    maximum_wind_gust_speed = db.Column(db.Float, nullable=True)
     evaporation = db.Column(db.Float, nullable=True)
+    total_precipitation_past3hours = db.Column(db.Float, nullable=True)
     other_weather_phenomena = db.Column(db.Float, nullable=True)
     obscuration = db.Column(db.Float, nullable=True)
     precipitation_type = db.Column(db.Float, nullable=True)
     maximum_temperature_at_height_and_over_period_specified = db.Column(db.Float, nullable=True)
+    non_coordinate_geopotential = db.Column(db.Float, nullable=True)
+    total_precipitation_past1hour = db.Column(db.Float, nullable=True)
     maximum_wind_gust_direction = db.Column(db.Float, nullable=True)
     total_precipitation_or_total_water_equivalent = db.Column(db.Float, nullable=True)
     extreme_counterclockwise_wind_direction_of_avariable_wind = db.Column(db.Float, nullable=True)
     extreme_clockwise_wind_direction_of_avariable_wind = db.Column(db.Float, nullable=True)
     global_solar_radiation_integrated_over_period_specified = db.Column(db.Float, nullable=True)
     soil_temperature = db.Column(db.Float, nullable=True)
+    total_precipitation_past12hours = db.Column(db.Float, nullable=True)
 
     def __init__(self, **kwargs):
         for column in list(kwargs):

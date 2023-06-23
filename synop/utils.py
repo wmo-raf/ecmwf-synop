@@ -7,9 +7,8 @@ import tempfile
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
-from bufr2geojson import transform as as_geojson
-
 from synop import db
+from synop.bufr2geojson import transform as as_geojson
 from synop.config import SETTINGS
 from synop.models import Station, StationIdentifier, Observation
 from synop.models.synop import rename_columns
@@ -148,37 +147,45 @@ def bufr2geojson(bufr_path, time_str):
 
                 if item.get("geojson"):
                     feature = item.get("geojson")
-                    f_properties = feature.get("properties")
+                    geometry = feature.get("geometry")
 
-                    wigos_id = f_properties.get("wigos_station_identifier")
+                    if geometry:
+                        f_properties = feature.get("properties")
+                        wigos_id = f_properties.get("wigos_station_identifier")
 
-                    if feature_collection.get(wigos_id) is None:
-                        feature_collection[wigos_id] = {**feature, "properties": {}}
+                        if wigos_id:
+                            if feature_collection.get(wigos_id) is None:
+                                feature_collection[wigos_id] = {**feature, "properties": {}}
 
-                    feature_collection[wigos_id]["id"] = wigos_id
+                            feature_collection[wigos_id]["id"] = wigos_id
 
-                    metadata = f_properties.get("metadata") or []
-                    feature_collection[wigos_id]["metadata"] = {}
+                            metadata = f_properties.get("metadata") or []
+                            feature_collection[wigos_id]["metadata"] = {}
 
-                    # get station metadata
-                    for meta in metadata:
-                        if meta.get("name") == "station_or_site_name":
-                            feature_collection[wigos_id]["metadata"]["station_or_site_name"] = meta.get("description")
-                            break
+                            # get station metadata
+                            for meta in metadata:
+                                if meta.get("name") == "station_or_site_name":
+                                    feature_collection[wigos_id]["metadata"]["station_or_site_name"] = meta.get(
+                                        "description")
+                                    break
 
-                    final_properties = feature_collection[wigos_id].get("properties")
+                            final_properties = feature_collection[wigos_id].get("properties")
 
-                    time = time_str
-                    name = f_properties.get("name")
-                    value = f_properties.get("value")
+                            for key in list(final_properties):
+                                if "->" in key:
+                                    final_properties.pop(key)
 
-                    if time:
-                        final_properties.update({"time": time})
+                            time = time_str
+                            name = f_properties.get("name")
+                            value = f_properties.get("value")
 
-                    if name and value:
-                        final_properties.update({name: value})
+                            if time:
+                                final_properties.update({"time": time})
 
-                    feature_collection[wigos_id]["properties"] = final_properties
+                            if name and value:
+                                final_properties.update({name: value})
+
+                            feature_collection[wigos_id]["properties"] = final_properties
 
         for station_id, feature in feature_collection.items():
             geojson["features"].append(feature)
