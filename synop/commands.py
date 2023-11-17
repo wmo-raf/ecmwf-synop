@@ -124,8 +124,8 @@ def load_stations():
 
                 if db_station:
                     exists = True
-
-                db_station = Station(**station_data)
+                else:
+                    db_station = Station(**station_data)
 
                 if exists:
                     logging.info('[STATION]: UPDATE')
