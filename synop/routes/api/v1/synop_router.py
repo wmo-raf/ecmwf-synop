@@ -66,6 +66,7 @@ def get_statistics():
     if not date:
         # get latest available date
         date = Observation.query.with_entities(Observation.time).distinct().order_by(Observation.time.desc()).first()
+        date = date[0].replace(tzinfo=pytz.UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     if not parameters:
         return jsonify('No parameters provided'), 400
