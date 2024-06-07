@@ -97,7 +97,11 @@ def get_statistics():
         ).all()
 
         # Format the results
-        results = {territory: count for territory, count in query}
+        results = {
+            "date": date,
+            "parameters": parameters,
+            "summary": {territory: count for territory, count in query}
+        }
 
         return jsonify(results)
 
