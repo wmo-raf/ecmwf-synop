@@ -31,8 +31,12 @@ class Station(db.Model):
     def serialize(self):
         """Return object data in easily serializable format"""
         station = {
-            "wigos_id": self.id,
+            "wigos_id": self.wigos_id,
             "name": self.name,
+            "country": self.territory,
+            "longitude": self.longitude,
+            "latitude": self.latitude,
+            "elevation": self.elevation,
         }
 
         return station
