@@ -26,8 +26,8 @@ def get_country_stations_data():
 
     if not country:
         stations = Station.query.all()
-
-    stations = Station.query.filter_by(territory=country).all()
+    else:
+        stations = Station.query.filter_by(territory=country).all()
 
     if not stations:
         logging.error(f'[ROUTER]: No stations found')
