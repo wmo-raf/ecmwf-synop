@@ -23,6 +23,7 @@ def get_available_dates():
 def get_country_stations_data():
     args = request.args
     country = args.get('country')
+    data_format = args.get('format')
 
     if not country:
         stations = Station.query.all()
@@ -34,6 +35,12 @@ def get_country_stations_data():
         return jsonify(f'No stations found for country'), 404
 
     stations = [station.serialize() for station in stations]
+
+    if data_format == 'geojson':
+        stations = {
+            "type": "FeatureCollection",
+            "features": [station.serialize(as_geojson=True) for station in stations],
+        }
 
     return jsonify(stations), 200
 

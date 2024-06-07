@@ -28,7 +28,7 @@ class Station(db.Model):
     def __repr__(self):
         return '<Station %r>' % self.name
 
-    def serialize(self):
+    def serialize(self, as_geojson=False):
         """Return object data in easily serializable format"""
         station = {
             "wigos_id": self.wigos_id,
@@ -38,6 +38,16 @@ class Station(db.Model):
             "latitude": self.latitude,
             "elevation": self.elevation,
         }
+
+        if as_geojson:
+            station = {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [self.longitude, self.latitude],
+                },
+                "properties": station,
+            }
 
         return station
 
