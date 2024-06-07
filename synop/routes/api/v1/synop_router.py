@@ -100,7 +100,8 @@ def get_statistics():
         results = {
             "date": date,
             "parameters": parameters,
-            "summary": {territory: count for territory, count in query}
+            "summary": {territory: count for territory, count in query},
+            "total": sum([count for territory, count in query]),
         }
 
         return jsonify(results)
