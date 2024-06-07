@@ -56,8 +56,8 @@ def get_country_observation_data():
 
 # get statistics for a specific date
 @endpoints.route('/statistics', strict_slashes=False, methods=['GET'])
-def get_statistics(date):
-    logging.info(f'[ROUTER]: Getting statistics for date: {date}')
+def get_statistics():
+    logging.info(f'[ROUTER]: Getting statistics')
 
     args = request.args
     date = args.get('date')
