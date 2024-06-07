@@ -34,13 +34,13 @@ def get_country_stations_data():
         logging.error(f'[ROUTER]: No stations found')
         return jsonify(f'No stations found for country'), 404
 
-    stations = [station.serialize() for station in stations]
-
     if data_format == 'geojson':
         stations = {
             "type": "FeatureCollection",
             "features": [station.serialize(as_geojson=True) for station in stations],
         }
+    else:
+        stations = [station.serialize() for station in stations]
 
     return jsonify(stations), 200
 
